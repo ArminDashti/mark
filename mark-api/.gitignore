@@ -1,0 +1,19 @@
+*.exe
+*.EXE
+bin/
+.env
+.armin/
+.cursor/
+*.log
+data/originals/
+data/cache/
+
+# BEGIN AUTO-MANAGED LARGE FILES (>5MB)
+# END AUTO-MANAGED LARGE FILES
+.tmp-logos/
+
+# AUTO-IGNORE-LARGE-FILES (>5MB) â€” managed by github-commit-push-all
+# github-commit-push-all: large files (>5MB) — auto-managed
+
+# auto-managed: files > 5MB
+bin/mark-api.exe
