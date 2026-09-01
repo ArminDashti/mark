@@ -1,0 +1,42 @@
+# Update mark containers on Irancell-T3
+
+Date: 2026-09-01
+
+## Action
+
+Docker **update** (not install) for mark stack on T3 — rebuilt images locally, loaded on server, recreated app containers only (volumes kept).
+
+## Connection
+
+- SSH MCP port 22: ETIMEDOUT
+- Shell SSH port 443: OK (`id_ed25519_cloud-admin_2-144-27-74`)
+
+## Images
+
+| Image | Build | Load |
+|-------|-------|------|
+| mark-api:latest | Local Windows Docker | `/tmp/mark-api.tar` → `docker load` |
+| mark-ui:latest | Local Windows Docker | `/tmp/mark-ui.tar` → `docker load` |
+
+## Containers recreated
+
+| Container | Compose dir | Notes |
+|-----------|-------------|-------|
+| mark-api | `/cloud-admin/docker/mark` | `--force-recreate --no-deps` (mark-pgsql untouched) |
+| mark-ui | `/cloud-admin/docker/mark-ui` | `--force-recreate` |
+| mark-pgsql | — | Not recreated (healthy, 3 days uptime) |
+
+## Verify
+
+- `docker exec mark-api wget -qO- http://127.0.0.1:8130/health` → `{"status":"ok"}`
+- `docker exec mark-ui wget -qO- http://127.0.0.1:80/` → HTML 200
+- Public HTTPS curl still fails cert verify for `mark-api.xaigrok.ir` (pre-existing — LE PEM not installed; see `publish-mark-t3.mdc`)
+
+## Cleanup
+
+- Removed `/tmp/mark-api.tar`, `/tmp/mark-ui.tar` on server
+- Removed local temp tars
+
+## Result
+
+**Success** — mark-api and mark-ui running latest locally built images.
