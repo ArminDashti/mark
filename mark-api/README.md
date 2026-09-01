@@ -45,4 +45,6 @@ go run ./cmd/server
 - Postgres: `localhost:5437`
 - Default login: `armin` / `dopadopa123`
 
+Agent upload account (mark-finder-agent-by-armin): `logo-agent` / `dopadopa123` — configured in `.env` as `MARK_AGENT_USERNAME` / `MARK_AGENT_PASSWORD`. Seeded on API startup.
+
 Uploads: PNG, WebP, SVG (rasterized on serve). JPEG is accepted but kept without invented transparency.

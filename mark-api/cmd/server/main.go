@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/ArminDashti/mark-api/internal/auth"
@@ -42,6 +43,22 @@ func main() {
 	}
 	if err := appdb.SeedDefaultUser(ctx, sqlDB, defaultHash); err != nil {
 		log.Fatalf("seed default user: %v", err)
+	}
+
+	agentUsername := os.Getenv("MARK_AGENT_USERNAME")
+	if agentUsername == "" {
+		agentUsername = appdb.AgentUsername
+	}
+	agentPassword := os.Getenv("MARK_AGENT_PASSWORD")
+	if agentPassword == "" {
+		agentPassword = appdb.AgentPassword
+	}
+	agentHash, err := auth.HashPassword(agentPassword)
+	if err != nil {
+		log.Fatalf("hash agent password: %v", err)
+	}
+	if err := appdb.SeedAgentUser(ctx, sqlDB, agentUsername, appdb.AgentEmail, agentHash); err != nil {
+		log.Fatalf("seed agent user: %v", err)
 	}
 
 	if err := storage.EnsureRoot(cfg.DataDir); err != nil {

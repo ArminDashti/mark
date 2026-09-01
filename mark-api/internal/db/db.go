@@ -72,6 +72,13 @@ const (
 	DefaultEmail    = "armin@local"
 )
 
+// Agent upload account for automated logo POST (mark-finder-agent-by-armin).
+const (
+	AgentUsername = "logo-agent"
+	AgentPassword = "dopadopa123"
+	AgentEmail    = "logo-agent@local"
+)
+
 // SeedDefaultUser upserts the default local login account.
 func SeedDefaultUser(ctx context.Context, db *sql.DB, passwordHash string) error {
 	_, err := db.ExecContext(ctx, `
@@ -82,5 +89,24 @@ func SeedDefaultUser(ctx context.Context, db *sql.DB, passwordHash string) error
 			username = EXCLUDED.username,
 			updated_at = NOW()
 	`, DefaultEmail, passwordHash, DefaultUsername)
+	return err
+}
+
+// SeedAgentUser upserts the automated upload account.
+func SeedAgentUser(ctx context.Context, db *sql.DB, username, email, passwordHash string) error {
+	if strings.TrimSpace(username) == "" {
+		return nil
+	}
+	if email == "" {
+		email = username + "@local"
+	}
+	_, err := db.ExecContext(ctx, `
+		INSERT INTO users (email, password_hash, username)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (email) DO UPDATE SET
+			password_hash = EXCLUDED.password_hash,
+			username = EXCLUDED.username,
+			updated_at = NOW()
+	`, email, passwordHash, username)
 	return err
 }
